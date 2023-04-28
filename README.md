@@ -54,7 +54,7 @@ Why not just using ChatGPT instead?
 6. Enter your API key in the settings menu
 7. Start to chat
 
-or [![Open in Streamlit](https://fertilisai-sapio-streamlit-sapio-kf3fcf.streamlit.app/)]
+or ![Open in Streamlit](https://fertilisai-sapio-streamlit-sapio-kf3fcf.streamlit.app/)
 
 <!-- FEATURES -->
 
