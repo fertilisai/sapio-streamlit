@@ -1,7 +1,6 @@
 import streamlit as st
 import openai
 
-
 system = [{"role": "system",
            "content": "You are a helpful assistant. Answer as concisely as possible."}]
 key_error = """
