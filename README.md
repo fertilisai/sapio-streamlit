@@ -8,7 +8,7 @@
   <h2 align="center">Sapio</h2>
 
   <p align="center">
-    A smarter way to use ChatGPT
+    A smarter ChatGPT
   </p>
 </div>
 
@@ -27,7 +27,6 @@ Why not just using ChatGPT instead?
 - Always available (no busy servers)
 - No login and connection timeout
 - More parameters to play with
-- Variables are stored locally in your browser
 - A fraction of the cost of ChatGPT Pro
 
 <!-- INSTALLATION -->
@@ -54,13 +53,13 @@ Why not just using ChatGPT instead?
 6. Enter your API key in the settings menu
 7. Start to chat
 
-or ![Open in Streamlit](https://fertilisai-sapio-streamlit-sapio-kf3fcf.streamlit.app/)
+or see the live ![demo on Streamlit](https://fertilisai-sapio-streamlit-sapio-kf3fcf.streamlit.app/)
 
 <!-- FEATURES -->
 
 ## Features
 
-- Settings (model,image size, temperature, max_tokens, presence_penalty)
+- Settings (model, image size, temperature, max_tokens, presence_penalty)
 - Chat history
 - DALL-E support
 
