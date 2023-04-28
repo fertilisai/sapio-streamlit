@@ -60,24 +60,17 @@ or ![Open in Streamlit](https://fertilisai-sapio-streamlit-sapio-kf3fcf.streamli
 
 ## Features
 
-- Settings (system prompt, model, temperature, max_tokens, presence_penalty)
+- Settings (model,image size, temperature, max_tokens, presence_penalty)
 - Chat history
-- Prompt history (use up and down arrow to navigate)
-- Code highlighting
-- Copy to clipboard (click anywhere on a chat bubble to copy)
-- Dark mode
+- DALL-E support
 
 <!-- ROADMAP -->
 
 ## Roadmap
 
-- [x] Writer mode
-- [ ] Web access (to current tab)
-- [ ] Prompt suggestions
-- [ ] Quick actions (@summarize, @translate, etc.)
-- [ ] DALL-E support
+- [x] DALL-E support
 - [ ] Whisper support
-- [ ] ???
+- [ ] LangChain support
 
 <!-- LICENSE -->
 
