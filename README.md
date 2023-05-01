@@ -16,14 +16,14 @@
 
 ## About The Project
 
-![Sapio-screenshot](assets/Screenshot.png)
+![Sapio-screenshot](assets/chat.png)
 
-Sapio is a simple Sreamlit UI that allows you to chat with OpenAI's GPT-3 API more specifically ChatGPT. The goal is to continue adding features frequently and make the ChatGPT capabilities even more powerful.
+Sapio is a simple Streamlit UI that allows you to chat with OpenAI's GPT-3 API more specifically ChatGPT. The goal is to continue adding features frequently and make the ChatGPT capabilities even more powerful.
 
 Why not just using ChatGPT instead?
 
 - Sapio will get new features
-- LangChain support (coming soon)
+- LangChain support
 - Always available (no busy servers)
 - No login and connection timeout
 - More parameters to play with
@@ -53,7 +53,7 @@ Why not just using ChatGPT instead?
 6. Enter your API key in the settings menu
 7. Start to chat
 
-or see the live ![demo on Streamlit](https://fertilisai-sapio-streamlit-sapio-kf3fcf.streamlit.app/)
+or see the live demo on ![Streamlit](https://fertilisai-sapio-streamlit-sapio-kf3fcf.streamlit.app/)
 
 <!-- FEATURES -->
 
@@ -62,14 +62,16 @@ or see the live ![demo on Streamlit](https://fertilisai-sapio-streamlit-sapio-kf
 - Settings (model, image size, temperature, max_tokens, presence_penalty)
 - Chat history
 - DALL-E support
+- LangChain agent with tools
 
 <!-- ROADMAP -->
 
 ## Roadmap
 
 - [x] DALL-E support
+- [x] LangChain support
+- [ ] Stable Diffusion support
 - [ ] Whisper support
-- [ ] LangChain support
 
 <!-- LICENSE -->
 
