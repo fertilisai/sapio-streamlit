@@ -53,7 +53,7 @@ Why not just using ChatGPT instead?
 6. Enter your API key in the settings menu
 7. Start to chat
 
-or see the live demo on ![Streamlit](https://fertilisai-sapio-streamlit-sapio-kf3fcf.streamlit.app/)
+or see the live demo on Streamlit: [https://sapiochat.streamlit.app/](https://sapiochat.streamlit.app/)
 
 <!-- FEATURES -->
 
@@ -71,6 +71,7 @@ or see the live demo on ![Streamlit](https://fertilisai-sapio-streamlit-sapio-kf
 - [x] DALL-E support
 - [x] LangChain support
 - [ ] Stable Diffusion support
+- [ ] Embeddings support
 - [ ] Whisper support
 
 <!-- LICENSE -->
