@@ -3,6 +3,7 @@ import streamlit as st
 import openai
 import agent as ag
 
+### GLOBAL VARIABLES ###
 
 system = [{"role": "system",
            "content": "You are a helpful assistant. Answer as concisely as possible."}]
@@ -29,7 +30,7 @@ ss = {'chat-messages': system,
       'agent-answer': '',
       'chat_model': 'gpt-3.5-turbo',
       'draw_model': 'DALL-E',
-      'emb_model': 'text-embedding-ada-002',  # dim = 1536, max input = 8191
+      'emb_model': 'text-embedding-ada-002',
       'size': '1024x1024',
       'max_length': 256,
       'temperature': 0.7,
@@ -190,7 +191,7 @@ st.set_page_config(
 error_msg = st.empty()
 tab1, tab2, tab3, tab4 = st.tabs(["Chat", "Draw", "Agent", "Settings"])
 
-with tab1:
+with tab1: # Chat
 
     with st.expander("Chat Settings"):
         col1, col2 = st.columns((1, 1))
@@ -228,14 +229,14 @@ with tab1:
         write_to_chat_resp()
 
 
-with tab2:
+with tab2: # Draw
 
-    with st.expander("Chat Settings"):
+    with st.expander("Draw Settings"):
         col1, col2 = st.columns((1, 1))
 
         with col1:
             st.selectbox('Draw Model',
-                         ("DALL-E", "Stable Diffusion"),
+                         ("DALL-E"),
                          key="draw_model"
                          )
         with col2:
@@ -263,27 +264,23 @@ with tab2:
     if st.session_state['draw-image'] != '':
         draw_to_draw_resp(st.session_state['draw-image'])
 
-with tab3:
+
+with tab3: # Agent
+
     with st.expander("Agent Tools"):
         col1, col2, col3 = st.columns((1, 1, 1))
 
         with col1:
-            st.checkbox("Web Search", key="ddg",
-                        value=st.session_state['ddg'])
-            st.checkbox("Calculator", key="llm-math",
-                        value=st.session_state['llm-math'])
+            st.checkbox("Web Search", key="ddg")
+            st.checkbox("Calculator", key="llm-math")
 
         with col2:
-            st.checkbox("Wikipedia", key="wikipedia",
-                        value=st.session_state['wikipedia'])
-            st.checkbox("Requests", key="requests_all",
-                        value=st.session_state['requests_all'])
+            st.checkbox("Wikipedia", key="wikipedia")
+            st.checkbox("Requests", key="requests_all")
 
         with col3:
-            st.checkbox("Python REPL", key="python_repl",
-                        value=st.session_state['python_repl'])
-            # st.checkbox("Stable Diffusion", key="stableDiffusion",
-            #             value=st.session_state['stableDiffusion'])
+            st.checkbox("Python REPL", key="python_repl")
+            # st.checkbox("Stable Diffusion", key="stableDiffusion")
 
     c1, c2 = st.columns((6, 1))
     ask_agent = c1.text_area(
@@ -295,7 +292,7 @@ with tab3:
     )
     with c2:
         st.markdown('##')
-        ask = st.button('Ask', key='ask', on_click=agent_input)
+        ask = st.button(' Ask ', key='ask', on_click=agent_input)
         clear2 = st.button('Clear', key='clear3', on_click=clear_agent)
 
     st.divider()
@@ -305,7 +302,7 @@ with tab3:
         write_to_agent_resp(st.session_state['agent-answer'])
 
 
-with tab4:
+with tab4: # Settings
 
     openai_key = st.text_input(label='OpenAI API Key',
                                placeholder='sk-...',
