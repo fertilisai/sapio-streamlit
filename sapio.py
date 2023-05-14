@@ -236,7 +236,7 @@ with tab2: # Draw
 
         with col1:
             st.selectbox('Draw Model',
-                         ("DALL-E"),
+                         ("DALL-E", "Stable Diffusion"),
                          key="draw_model"
                          )
         with col2:
