@@ -1,7 +1,9 @@
 import os
+import copy
 import streamlit as st
 import openai
 import agent as ag
+import embeddings as emb
 
 ### GLOBAL VARIABLES ###
 
@@ -25,7 +27,12 @@ else:
     openai.key = st.session_state['openai_key']
     os.environ['OPENAI_API_KEY'] = st.session_state['openai_key']
 
-ss = {'chat-messages': system,
+# if 'serpapi_key' not in st.session_state:
+#     st.session_state['serpapi_key'] = ''
+
+ss = {'chat-messages': copy.copy(system),
+      'qa-messages': copy.copy(system),
+      'temp-messages': copy.copy(system),
       'draw-image': '',
       'agent-answer': '',
       'chat_model': 'gpt-3.5-turbo',
@@ -55,6 +62,7 @@ def test_key(key):
         return False
     else:
         openai.api_key = key
+        st.session_state['openai_key'] = key
         return True
 
 
@@ -76,16 +84,6 @@ def chat_request(messages):
         error_msg.error(key_error)
 
 
-def agent_request(ask, t_list):
-    if key_exist:
-        answer = ag.ask_agent(ask, t_list, st.session_state['ddg'],
-                              st.session_state['stableDiffusion'])
-        st.session_state['agent-answer'] = answer
-        write_to_agent_resp(answer)
-    else:
-        error_msg.error(key_error)
-
-
 def draw_request(description):
     if key_exist:
         image_response = openai.Image.create(
@@ -97,6 +95,34 @@ def draw_request(description):
         image_url = image_response["data"][0]["url"]
         st.session_state['draw-image'] = image_url
         draw_to_draw_resp(image_url)
+    else:
+        error_msg.error(key_error)
+
+
+def agent_request(ask, t_list):
+    if key_exist:
+        answer = ag.ask_agent(ask, t_list, st.session_state['ddg'],
+                              st.session_state['stableDiffusion'])
+        st.session_state['agent-answer'] = answer
+        write_to_agent_resp(answer)
+    else:
+        error_msg.error(key_error)
+
+
+def qa_request(temp_messages):
+    if key_exist:
+        qa_response = openai.ChatCompletion.create(
+            model='gpt-3.5-turbo',
+            messages=temp_messages,
+            temperature=0,
+            max_tokens=256,
+        )
+        qa_answer = qa_response["choices"][0]["message"]["content"]
+        st.session_state['qa-messages'].append(
+            {"role": "assistant", "content": qa_answer})
+        st.session_state['temp-messages'].append(
+            {"role": "assistant", "content": qa_answer})
+        write_to_qa_resp()
     else:
         error_msg.error(key_error)
 
@@ -118,13 +144,24 @@ def draw_to_draw_resp(image_url):
 
 
 def write_to_agent_resp(answer):
-    with angent_resp.container():
+    with agent_resp.container():
         st.write("QUESTION:")
         st.write(answer['input'])
         st.write("ANSWER:")
         st.write(answer['output'])
         st.write("REASON:")
         st.json(answer['intermediate_steps'], expanded=True)
+
+
+def write_to_qa_resp():
+    with qa_resp.container():
+        for m in st.session_state['qa-messages'][::-1]:
+            if m["role"] != "system":
+                st.write(m["role"].upper()+":")
+                st.write(m["content"])
+                st.divider()
+            else:
+                pass
 
 
 def chat_input():
@@ -156,9 +193,24 @@ def agent_input():
     st.session_state['ask_agent'] = ''
 
 
+def qa_input():
+    qa = st.session_state['qa']
+    if key_exist:
+        context = emb.get_context_from_emb(db, qa)
+        query_and_context = f'Answer the following QUESTION base on this CONTEXT:{context} \n\n QUESTION:{qa} \n\n Limit and yourself to the context.'
+        st.session_state['temp-messages'].append(
+            {"role": "user", "content": query_and_context})
+        st.session_state['qa-messages'].append(
+            {"role": "user", "content": qa})
+        qa_request(st.session_state['temp-messages'])
+        st.session_state['qa'] = ''
+    else:
+        error_msg.error(key_error)
+
+
 def clear_chat():
     st.session_state['question'] = ''
-    st.session_state['chat-messages'] = system
+    st.session_state['chat-messages'] = copy.copy(system)
     chat_resp.empty()
 
 
@@ -171,7 +223,14 @@ def clear_draw():
 def clear_agent():
     st.session_state['ask_agent'] = ''
     st.session_state['agent-answer'] = ''
-    angent_resp.empty()
+    agent_resp.empty()
+
+
+def clear_qa():
+    st.session_state['qa'] = ''
+    st.session_state['qa-messages'] = copy.copy(system)
+    st.session_state['temp-messages'] = copy.copy(system)
+    qa_resp.empty()
 
 
 def reset():
@@ -189,7 +248,7 @@ st.set_page_config(
 # st.write("A smarter ChatGPT")
 
 error_msg = st.empty()
-tab1, tab2, tab3, tab4 = st.tabs(["Chat", "Draw", "Agent", "Settings"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Chat", "Draw", "Agent", "Q&A", "Settings"])
 
 with tab1: # Chat
 
@@ -271,8 +330,8 @@ with tab3: # Agent
         col1, col2, col3 = st.columns((1, 1, 1))
 
         with col1:
-            st.checkbox("Web Search", key="ddg")
-            st.checkbox("Calculator", key="llm-math")
+            st.checkbox("Web Search", key="ddg", value=True)
+            st.checkbox("Calculator", key="llm-math", value=True)
 
         with col2:
             st.checkbox("Wikipedia", key="wikipedia")
@@ -292,37 +351,64 @@ with tab3: # Agent
     )
     with c2:
         st.markdown('##')
-        ask = st.button(' Ask ', key='ask', on_click=agent_input)
+        ask = st.button('Ask', key='ask', on_click=agent_input)
         clear2 = st.button('Clear', key='clear3', on_click=clear_agent)
 
     st.divider()
-    angent_resp = st.empty()
+    agent_resp = st.empty()
 
     if st.session_state['agent-answer'] != '':
         write_to_agent_resp(st.session_state['agent-answer'])
 
 
-with tab4: # Settings
+with tab4: # Q&A
+    
+    uploaded_files = st.file_uploader("Choose file (pdf, txt)", 
+                                      accept_multiple_files=False, 
+                                      type=["pdf", "txt"],)
+                                      #type=["pdf", "txt", "docx"],)
+    if uploaded_files is not None:
+        with st.spinner("Indexing document... ⏳"):
+            docs = emb.load_docs(uploaded_files)
+            splits = emb.split_docs(docs, 200, 0)
+            db = emb.get_emb(splits)
+
+    c1, c2 = st.columns((6, 1))
+    qa = c1.text_area(
+        label='Question & Answer',
+        height=90,
+        placeholder='Ask something related to the document...',
+        label_visibility='hidden',
+        key='qa'
+    )
+    with c2:
+        st.markdown('##')
+        ask_doc = st.button('Send', key='ask_doc', on_click=qa_input)
+        clear4 = st.button('Clear', key='clear4', on_click=clear_qa)
+
+    st.divider()
+    qa_resp = st.empty()
+
+    if st.session_state['qa-messages'] != system:
+        write_to_qa_resp()
+
+
+with tab5: # Settings
 
     openai_key = st.text_input(label='OpenAI API Key',
                                placeholder='sk-...',
                                type='password',
-                               key='openai_key'
+                               value=st.session_state['openai_key']
                                )
-
     if openai_key:
         key_exist = test_key(openai_key)
 
-    # st.radio("Image Size",
-    #      options=["1024x1024", "512x512", "256x256"],
-    #      key="size"
-    #      )
-
-    # web = st.checkbox("Web Search",
-    #                   key="web",
-    #                   value=True
-    #                   )
-
+    # serp_key = st.text_input(label='Serp API Key',
+    #                          placeholder='sk-...',
+    #                          type='password',
+    #                          value=st.session_state['serpapi_key']
+    #                          )
+    
     st.divider()
     st.button(label="Reset all settings", on_click=reset)
 

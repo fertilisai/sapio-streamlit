@@ -3,3 +3,7 @@ openai
 langchain
 wikipedia
 duckduckgo-search
+gradio-tools
+faiss-cpu
+pypdf
+doc2text
